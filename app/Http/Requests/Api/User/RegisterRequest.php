@@ -18,8 +18,8 @@ class RegisterRequest extends FormRequest
             'email'                 => ['required', 'email', 'unique:users,email'],
             'phone'                 => ['nullable', 'string', 'max:30'],
             'password'              => ['required', 'string', 'min:8', 'confirmed'],
-            'global_role'           => ['required', 'string', 'in:customer,partner,admin'],
-            'registration_source'   => ['nullable', 'string', 'max:50'],
+            'global_role'           => ['required', 'string', 'in:customer,partner'], // Admin role removed for security
+            'registration_source'   => ['nullable', 'string', 'max:50', 'in:web,mobile,api'],
         ];
     }
 }

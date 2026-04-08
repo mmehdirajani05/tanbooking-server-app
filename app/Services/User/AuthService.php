@@ -14,6 +14,13 @@ class AuthService
 
     public function register(array $data): array
     {
+        // Prevent self-registration as admin - only seeders/existing admins can create admins
+        if ($data['global_role'] === 'admin') {
+            throw ValidationException::withMessages([
+                'global_role' => ['Admin accounts can only be created by existing administrators.'],
+            ]);
+        }
+
         $user = User::create([
             'name'                => $data['name'],
             'email'               => $data['email'],

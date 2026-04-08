@@ -42,4 +42,37 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Indicate that the user is a customer.
+     */
+    public function customer(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'global_role' => 'customer',
+            'is_active' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is a hotel owner (partner).
+     */
+    public function partner(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'global_role' => 'partner',
+            'is_active' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is an admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'global_role' => 'admin',
+            'is_active' => true,
+        ]);
+    }
 }

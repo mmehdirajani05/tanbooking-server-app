@@ -50,4 +50,34 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserAccess::class);
     }
+
+    public function ownedHotels()
+    {
+        return $this->hasMany(Hotel::class, 'owner_id');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'customer_id');
+    }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class, 'customer_id');
+    }
+
+    public function assignedConversations()
+    {
+        return $this->hasMany(Conversation::class, 'assigned_to');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function approvedHotels()
+    {
+        return $this->hasMany(Hotel::class, 'approved_by');
+    }
 }
