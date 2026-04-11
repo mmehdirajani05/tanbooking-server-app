@@ -3,16 +3,40 @@
 use App\Http\Controllers\Admin\Web\AdminAuthController;
 use App\Http\Controllers\Admin\Web\AdminDashboardController;
 use App\Http\Controllers\Admin\CompanyApprovalController;
+use App\Http\Controllers\Partner\PartnerAuthController;
+use App\Http\Controllers\Partner\CompanyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Admin login
+// ================= ADMIN AUTH =================
 Route::get('admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
-Route::post('admin/logout', [AdminAuthController::class, 'logout'])->name('logout');
+Route::post('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+// ================= PARTNER AUTH =================
+Route::prefix('partner')->name('partner.')->group(function () {
+    Route::get('login', [PartnerAuthController::class, 'showLogin'])->name('login');
+    Route::post('login', [PartnerAuthController::class, 'login'])->name('login.post');
+    Route::get('register', [PartnerAuthController::class, 'showRegister'])->name('register');
+    Route::post('register', [PartnerAuthController::class, 'register'])->name('register.post');
+    
+    // Company Registration (requires partner role)
+    Route::middleware(['auth', 'role:partner'])->prefix('company')->name('company.')->group(function () {
+        Route::get('register', [\App\Http\Controllers\Partner\CompanyRegistrationController::class, 'create'])->name('register');
+        Route::post('register', [\App\Http\Controllers\Partner\CompanyRegistrationController::class, 'store'])->name('register.post');
+    });
+});
+
+// Logout (shared)
+Route::post('logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout')->middleware('auth');
 
 // Admin panel (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
