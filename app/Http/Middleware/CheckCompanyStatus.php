@@ -24,7 +24,7 @@ class CheckCompanyStatus
 
         // Check if user has any approved company
         $hasApprovedCompany = $user->companies()
-            ->where('companies.status', 'approved')
+            ->wherePivot('company_users.status', 'approved')
             ->exists();
 
         if (!$hasApprovedCompany && $request->routeIs('partner.*')) {
@@ -32,14 +32,14 @@ class CheckCompanyStatus
             if ($request->routeIs('partner.company.pending')) {
                 return $next($request);
             }
-            
+
             return redirect()->route('partner.company.pending')
                 ->with('warning', 'Your company is pending approval. You will be notified once approved.');
         }
 
         // If company is rejected, show rejection page
         $rejectedCompany = $user->companies()
-            ->where('status', 'rejected')
+            ->wherePivot('company_users.status', 'rejected')
             ->first();
 
         if ($rejectedCompany && !$request->routeIs('partner.company.rejected')) {
