@@ -24,7 +24,7 @@ class CheckCompanyStatus
 
         // Check if user has any approved company
         $hasApprovedCompany = $user->companies()
-            ->where('status', 'approved')
+            ->where('companies.status', 'approved')
             ->exists();
 
         if (!$hasApprovedCompany && $request->routeIs('partner.*')) {

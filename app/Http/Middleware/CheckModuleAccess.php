@@ -25,7 +25,7 @@ class CheckModuleAccess
 
         // Check if user has approved company with this module
         $hasAccess = $user->companies()
-            ->where('status', 'approved')
+            ->where('companies.status', 'approved')
             ->whereHas('modules', function ($query) use ($module) {
                 $query->where('module_type', $module)
                       ->where('status', 'approved');

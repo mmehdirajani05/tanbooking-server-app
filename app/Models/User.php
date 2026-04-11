@@ -105,11 +105,11 @@ class User extends Authenticatable
     public function hasApprovedCompanyWithModule(string $moduleType): bool
     {
         return $this->companies()
+                    ->where('companies.status', 'approved')
                     ->whereHas('modules', function ($query) use ($moduleType) {
                         $query->where('module_type', $moduleType)
                               ->where('status', 'approved');
                     })
-                    ->where('status', 'approved')
                     ->exists();
     }
 
@@ -119,7 +119,7 @@ class User extends Authenticatable
     public function primaryCompany()
     {
         return $this->companies()
-                    ->where('status', 'approved')
+                    ->where('companies.status', 'approved')
                     ->first();
     }
 }

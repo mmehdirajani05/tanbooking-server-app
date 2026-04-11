@@ -19,7 +19,7 @@ class PartnerDashboardController extends Controller
         
         // Get user's approved company
         $company = $user->companies()
-            ->where('status', 'approved')
+            ->where('companies.status', 'approved')
             ->first();
 
         if (!$company) {
