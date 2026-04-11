@@ -100,17 +100,31 @@ class User extends Authenticatable
     }
 
     /**
+     * Get user's companies with approved status
+     * Uses direct query to avoid pivot table ambiguity
+     */
+    public function approvedCompanies()
+    {
+        return Company::whereHas('users', function ($query) {
+                $query->where('user_id', $this->id);
+            })
+            ->where('status', 'approved');
+    }
+
+    /**
      * Check if user has an approved company with specific module
      */
     public function hasApprovedCompanyWithModule(string $moduleType): bool
     {
-        return $this->companies()
-                    ->wherePivot('company_users.status', 'approved')
-                    ->whereHas('modules', function ($query) use ($moduleType) {
-                        $query->where('module_type', $moduleType)
-                              ->where('status', 'approved');
-                    })
-                    ->exists();
+        return Company::whereHas('users', function ($query) {
+                $query->where('user_id', $this->id);
+            })
+            ->where('status', 'approved')
+            ->whereHas('modules', function ($query) use ($moduleType) {
+                $query->where('module_type', $moduleType)
+                      ->where('status', 'approved');
+            })
+            ->exists();
     }
 
     /**
@@ -118,8 +132,10 @@ class User extends Authenticatable
      */
     public function primaryCompany()
     {
-        return $this->companies()
-                    ->wherePivot('company_users.status', 'approved')
-                    ->first();
+        return Company::whereHas('users', function ($query) {
+                $query->where('user_id', $this->id);
+            })
+            ->where('status', 'approved')
+            ->first();
     }
 }

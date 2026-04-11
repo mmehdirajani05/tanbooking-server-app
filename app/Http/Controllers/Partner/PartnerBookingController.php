@@ -14,7 +14,7 @@ class PartnerBookingController extends Controller
      */
     public function index(Request $request)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
 
         $query = Booking::where('company_id', $company->id)
             ->with(['customer:id,name,email,phone', 'hotel:id,name,city']);

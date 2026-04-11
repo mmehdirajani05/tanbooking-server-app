@@ -28,7 +28,7 @@ class CompanyController extends Controller
      */
     public function rejected()
     {
-        $company = Auth::user()->ownedCompanies()->where('companies.status', 'rejected')->first();
+        $company = Auth::user()->ownedCompanies()->where('status', 'rejected')->first();
         return view('partner.company.rejected', compact('company'));
     }
 
@@ -37,7 +37,7 @@ class CompanyController extends Controller
      */
     public function show()
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         
         if (!$company) {
             return redirect()->route('partner.company.pending');
@@ -54,7 +54,7 @@ class CompanyController extends Controller
      */
     public function edit()
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         return view('partner.company.edit', compact('company'));
     }
 
@@ -63,7 +63,7 @@ class CompanyController extends Controller
      */
     public function update(Request $request)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
 
         $validated = $request->validate([
             'display_name' => 'sometimes|string|max:255',
@@ -83,7 +83,7 @@ class CompanyController extends Controller
      */
     public function documents()
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         $documents = $company->documents()->latest()->get();
         
         return view('partner.company.documents', compact('company', 'documents'));
@@ -94,7 +94,7 @@ class CompanyController extends Controller
      */
     public function uploadDocument(Request $request)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
 
         $validated = $request->validate([
             'document_type' => 'required|string|in:brela,tin,tourism_license,event_license,other',

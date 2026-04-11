@@ -24,13 +24,7 @@ class CheckModuleAccess
         }
 
         // Check if user has approved company with this module
-        $hasAccess = $user->companies()
-            ->wherePivot('company_users.status', 'approved')
-            ->whereHas('modules', function ($query) use ($module) {
-                $query->where('module_type', $module)
-                      ->where('status', 'approved');
-            })
-            ->exists();
+        $hasAccess = $user->hasApprovedCompanyWithModule($module);
 
         if (!$hasAccess) {
             abort(403, "You do not have access to the {$module} module. Please contact support.");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Company;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +24,7 @@ class CheckCompanyStatus
         }
 
         // Check if user has any approved company
-        $hasApprovedCompany = $user->companies()
-            ->wherePivot('company_users.status', 'approved')
-            ->exists();
+        $hasApprovedCompany = $user->approvedCompanies()->exists();
 
         if (!$hasApprovedCompany && $request->routeIs('partner.*')) {
             // Don't redirect if already on pending page
@@ -38,8 +37,10 @@ class CheckCompanyStatus
         }
 
         // If company is rejected, show rejection page
-        $rejectedCompany = $user->companies()
-            ->wherePivot('company_users.status', 'rejected')
+        $rejectedCompany = Company::whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->where('status', 'rejected')
             ->first();
 
         if ($rejectedCompany && !$request->routeIs('partner.company.rejected')) {

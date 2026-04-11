@@ -18,9 +18,7 @@ class PartnerDashboardController extends Controller
         $user = Auth::user();
         
         // Get user's approved company
-        $company = $user->companies()
-            ->wherePivot('company_users.status', 'approved')
-            ->first();
+        $company = $user->primaryCompany();
 
         if (!$company) {
             return redirect()->route('partner.company.pending');

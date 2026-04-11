@@ -16,8 +16,8 @@ class PartnerHotelController extends Controller
      */
     public function index()
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
-        
+        $company = Auth::user()->primaryCompany();
+
         $hotels = Hotel::where('company_id', $company->id)
             ->withCount('roomTypes')
             ->withCount('bookings')
@@ -32,7 +32,7 @@ class PartnerHotelController extends Controller
      */
     public function create()
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         return view('partner.hotels.create', compact('company'));
     }
 
@@ -41,7 +41,7 @@ class PartnerHotelController extends Controller
      */
     public function store(Request $request)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -96,7 +96,7 @@ class PartnerHotelController extends Controller
      */
     public function show(int $id)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         
         $hotel = Hotel::where('company_id', $company->id)
             ->with(['roomTypes', 'bookings'])
@@ -112,7 +112,7 @@ class PartnerHotelController extends Controller
      */
     public function edit(int $id)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         
         $hotel = Hotel::where('company_id', $company->id)->findOrFail($id);
 
@@ -124,7 +124,7 @@ class PartnerHotelController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         
         $hotel = Hotel::where('company_id', $company->id)->findOrFail($id);
 
@@ -140,7 +140,6 @@ class PartnerHotelController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'check_in_time' => 'nullable|date_format:H:i',
             'check_out_time' => 'nullable|date_format:H:i',
-            'search_tags' => 'nullable|array',
             'retail_price' => 'nullable|numeric|min:0',
             'contract_price' => 'nullable|numeric|min:0',
         ]);
@@ -172,7 +171,7 @@ class PartnerHotelController extends Controller
      */
     public function destroy(int $id)
     {
-        $company = Auth::user()->companies()->where('companies.status', 'approved')->first();
+        $company = Auth::user()->primaryCompany();
         
         $hotel = Hotel::where('company_id', $company->id)->findOrFail($id);
         $hotel->delete();
