@@ -105,9 +105,4 @@ class Company extends Model
             ->where('status', 'approved')
             ->exists();
     }
-
-    public function getModulesAttribute(): array
-    {
-        return $this->modules()->pluck('module_type')->toArray();
-    }
 }
