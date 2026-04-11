@@ -17,10 +17,20 @@
         <!-- Registration Form -->
         <div class="bg-white rounded-2xl shadow-xl p-8" x-data="{
             modules: [],
-            get hasHotel() { return this.modules.includes('hotel'); },
-            get hasTourism() { return this.modules.includes('tourism'); },
-            get hasEvent() { return this.modules.includes('event'); },
-            get hasESim() { return this.modules.includes('esim'); }
+            activeTab: null,
+            setActiveTab(module) {
+                if (this.modules.includes(module)) {
+                    this.activeTab = module;
+                }
+            },
+            init() {
+                this.$watch('modules', (value) => {
+                    if (!this.activeTab || !value.includes(this.activeTab)) {
+                        this.activeTab = value.length > 0 ? value[0] : null;
+                    }
+                });
+            },
+            get hasModules() { return this.modules.length > 0; }
         }">
             <form method="POST" action="{{ route('partner.company.register.post') }}">
                 @csrf
@@ -127,7 +137,7 @@
                         <h3 class="text-lg font-semibold text-gray-900">Select Modules *</h3>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
                         <label class="relative flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-500 transition">
                             <input type="checkbox" name="modules[]" value="hotel" x-model="modules" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
                             <div class="ml-3">
@@ -164,13 +174,47 @@
                             </div>
                         </label>
                     </div>
+
+                    <!-- Tabs for selected modules -->
+                    <div x-show="hasModules" x-transition class="border-b border-gray-200">
+                        <nav class="flex space-x-4">
+                            <template x-if="modules.includes('hotel')">
+                                <button type="button" @click="activeTab = 'hotel'" 
+                                    :class="activeTab === 'hotel' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                    class="py-3 px-4 border-b-2 font-medium text-sm transition">
+                                    <i class="fas fa-hotel mr-2"></i>Hotel Details
+                                </button>
+                            </template>
+                            <template x-if="modules.includes('tourism')">
+                                <button type="button" @click="activeTab = 'tourism'" 
+                                    :class="activeTab === 'tourism' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                    class="py-3 px-4 border-b-2 font-medium text-sm transition">
+                                    <i class="fas fa-map-marked-alt mr-2"></i>Tourism Details
+                                </button>
+                            </template>
+                            <template x-if="modules.includes('event')">
+                                <button type="button" @click="activeTab = 'event'" 
+                                    :class="activeTab === 'event' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                    class="py-3 px-4 border-b-2 font-medium text-sm transition">
+                                    <i class="fas fa-calendar-alt mr-2"></i>Event Details
+                                </button>
+                            </template>
+                            <template x-if="modules.includes('esim')">
+                                <button type="button" @click="activeTab = 'esim'" 
+                                    :class="activeTab === 'esim' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                    class="py-3 px-4 border-b-2 font-medium text-sm transition">
+                                    <i class="fas fa-sim-card mr-2"></i>eSIM Details
+                                </button>
+                            </template>
+                        </nav>
+                    </div>
                 </div>
 
-                <!-- Step 4: Module-Specific Details (Dynamic) -->
-                <div class="mb-8 space-y-6">
+                <!-- Step 4: Module-Specific Details (Only shows active tab) -->
+                <div class="mb-8">
                     
                     <!-- Hotel Details -->
-                    <div x-show="hasHotel" x-transition class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                    <div x-show="activeTab === 'hotel'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="bg-blue-50 border border-blue-200 rounded-xl p-6">
                         <h3 class="text-lg font-semibold text-blue-900 mb-4">
                             <i class="fas fa-hotel mr-2"></i>Hotel Details
                         </h3>
@@ -196,7 +240,7 @@
                     </div>
 
                     <!-- Tourism Details -->
-                    <div x-show="hasTourism" x-transition class="bg-green-50 border border-green-200 rounded-xl p-6">
+                    <div x-show="activeTab === 'tourism'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="bg-green-50 border border-green-200 rounded-xl p-6">
                         <h3 class="text-lg font-semibold text-green-900 mb-4">
                             <i class="fas fa-map-marked-alt mr-2"></i>Tourism Details
                         </h3>
@@ -241,7 +285,7 @@
                     </div>
 
                     <!-- Event Details -->
-                    <div x-show="hasEvent" x-transition class="bg-purple-50 border border-purple-200 rounded-xl p-6">
+                    <div x-show="activeTab === 'event'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="bg-purple-50 border border-purple-200 rounded-xl p-6">
                         <h3 class="text-lg font-semibold text-purple-900 mb-4">
                             <i class="fas fa-calendar-alt mr-2"></i>Event Details
                         </h3>
@@ -267,7 +311,7 @@
                     </div>
 
                     <!-- eSIM Details -->
-                    <div x-show="hasESim" x-transition class="bg-orange-50 border border-orange-200 rounded-xl p-6">
+                    <div x-show="activeTab === 'esim'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="bg-orange-50 border border-orange-200 rounded-xl p-6">
                         <h3 class="text-lg font-semibold text-orange-900 mb-4">
                             <i class="fas fa-sim-card mr-2"></i>eSIM Details
                         </h3>
@@ -281,12 +325,18 @@
                         </div>
                     </div>
 
+                    <!-- No module selected message -->
+                    <div x-show="!hasModules" class="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+                        <i class="fas fa-arrow-up text-gray-300 text-4xl mb-3"></i>
+                        <p class="text-gray-500">Select at least one module above to see specific details form</p>
+                    </div>
+
                 </div>
 
                 <!-- Submit -->
                 <button type="submit" 
                     class="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition font-semibold text-lg shadow-lg hover:shadow-xl"
-                    :disabled="modules.length === 0">
+                    :disabled="!hasModules">
                     <i class="fas fa-paper-plane mr-2"></i>Submit for Approval
                 </button>
             </form>
