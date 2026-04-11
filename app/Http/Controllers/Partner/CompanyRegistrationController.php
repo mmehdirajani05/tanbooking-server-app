@@ -37,9 +37,29 @@ class CompanyRegistrationController extends Controller
             'contact_email' => 'nullable|email|max:255',
             'modules' => 'required|array|min:1',
             'modules.*' => 'in:hotel,tourism,event,esim',
+            
+            // Hotel-specific
+            'hotel_property_count' => 'nullable|integer|min:1',
+            'hotel_category' => 'nullable|in:luxury,upscale,mid_scale,economy,boutique',
+            
+            // Tourism-specific
+            'tourism_license_number' => 'nullable|string|max:100',
+            'tourism_region' => 'nullable|in:mainland,zanzibar,both',
+            'tour_types' => 'nullable|array',
+            'tour_types.*' => 'in:safari,cultural,beach,adventure',
+            
+            // Event-specific
+            'event_license_number' => 'nullable|string|max:100',
+            'event_type' => 'nullable|in:concert,conference,sports,cultural,corporate',
+            
+            // eSIM-specific
+            'esim_provider' => 'nullable|string|max:100',
         ]);
 
         $company = $this->companyService->createCompany($validated);
+
+        // Store module-specific details if needed (can be extended later)
+        // For now, all validated data is available for future use
 
         return redirect()->route('partner.company.pending')
             ->with('success', 'Company registration submitted! Your application is under review.');
