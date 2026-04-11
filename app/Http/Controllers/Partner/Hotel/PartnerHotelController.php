@@ -55,7 +55,6 @@ class PartnerHotelController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'check_in_time' => 'nullable|date_format:H:i',
             'check_out_time' => 'nullable|date_format:H:i',
-            'search_tags' => 'nullable|array',
             'retail_price' => 'nullable|numeric|min:0',
             'contract_price' => 'nullable|numeric|min:0',
         ]);
@@ -84,7 +83,6 @@ class PartnerHotelController extends Controller
             'check_in_time' => $validated['check_in_time'] ?? '14:00:00',
             'check_out_time' => $validated['check_out_time'] ?? '12:00:00',
             'status' => 'pending',
-            'search_tags' => $validated['search_tags'] ?? null,
             'retail_price' => $validated['retail_price'] ?? null,
             'contract_price' => $validated['contract_price'] ?? null,
         ]);

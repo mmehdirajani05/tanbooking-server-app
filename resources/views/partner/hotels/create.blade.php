@@ -10,17 +10,6 @@
 
     <form method="POST" action="{{ route('partner.hotels.store') }}" enctype="multipart/form-data" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" x-data="{ 
         images: [],
-        searchTags: [],
-        newTag: '',
-        addTag() {
-            if (this.newTag.trim() && !this.searchTags.includes(this.newTag.trim())) {
-                this.searchTags.push(this.newTag.trim());
-                this.newTag = '';
-            }
-        },
-        removeTag(index) {
-            this.searchTags.splice(index, 1);
-        },
         handleImages(e) {
             this.images = Array.from(e.target.files);
         }
@@ -65,6 +54,49 @@
                 </div>
             </div>
 
+            <!-- Contact -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-phone text-green-500"></i> Contact Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                        <input type="text" name="phone" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" placeholder="+255 123 456 789">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" name="email" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" placeholder="info@hotel.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Check-in Time</label>
+                        <input type="time" name="check_in_time" value="14:00" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Check-out Time</label>
+                        <input type="time" name="check_out_time" value="12:00" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Amenities -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-concierge-bell text-blue-500"></i> Amenities
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    @php
+                        $amenitiesList = ['WiFi', 'Pool', 'Gym', 'Spa', 'Restaurant', 'Parking', 'Room Service', 'Laundry', 'Business Center', 'Airport Shuttle', 'Pet Friendly', 'Bar'];
+                    @endphp
+                    @foreach($amenitiesList as $amenity)
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" name="amenities[]" value="{{ $amenity }}" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                            <span class="text-sm text-gray-700">{{ $amenity }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- Pricing -->
             <div>
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -81,30 +113,6 @@
                         <input type="number" name="contract_price" min="0" step="0.01" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" placeholder="4000.00">
                         <p class="text-xs text-gray-500 mt-1">Visible only to contractors</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Search Tags -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-tags text-purple-500"></i> Search Tags
-                </h3>
-                <div class="border border-gray-300 rounded-lg p-4">
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <template x-for="(tag, index) in searchTags" :key="index">
-                            <span class="inline-flex items-center px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm">
-                                <span x-text="tag"></span>
-                                <button type="button" @click="removeTag(index)" class="ml-2 text-primary-500 hover:text-primary-700">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </span>
-                        </template>
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="text" x-model="newTag" @keydown.enter.prevent="addTag()" placeholder="Add tag (e.g., Near Beach, City Center)" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm">
-                        <button type="button" @click="addTag()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm">Add</button>
-                    </div>
-                    <input type="hidden" name="search_tags" x-bind:value="JSON.stringify(searchTags)">
                 </div>
             </div>
 
