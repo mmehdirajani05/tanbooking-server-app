@@ -13,6 +13,10 @@ class Booking extends Model
 
     protected $fillable = [
         'customer_id',
+        'company_id',
+        'module_type',
+        'bookable_id',
+        'bookable_type',
         'hotel_id',
         'room_type_id',
         'booking_reference',
@@ -24,10 +28,17 @@ class Booking extends Model
         'number_of_rooms',
         'number_of_guests',
         'total_price',
+        'paid_amount',
+        'refund_amount',
+        'payment_status',
+        'payment_method',
+        'payment_reference',
         'status',
         'notes',
         'confirmed_at',
         'cancelled_at',
+        'cancelled_by',
+        'cancellation_reason',
     ];
 
     protected function casts(): array
@@ -38,9 +49,24 @@ class Booking extends Model
             'number_of_rooms'=> 'integer',
             'number_of_guests' => 'integer',
             'total_price'    => 'decimal:2',
+            'paid_amount'    => 'decimal:2',
+            'refund_amount'  => 'decimal:2',
             'confirmed_at'   => 'datetime',
             'cancelled_at'   => 'datetime',
         ];
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Polymorphic relationship to the bookable item (Hotel, TourismPackage, Event, etc.)
+     */
+    public function bookable()
+    {
+        return $this->morphTo();
     }
 
     public function customer(): BelongsTo

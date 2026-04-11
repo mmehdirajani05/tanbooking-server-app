@@ -14,6 +14,7 @@ class Hotel extends Model
 
     protected $fillable = [
         'owner_id',
+        'company_id',
         'name',
         'description',
         'city',
@@ -29,6 +30,11 @@ class Hotel extends Model
         'approved_at',
         'approved_by',
         'rejection_reason',
+        'retail_price',
+        'contract_price',
+        'search_tags',
+        'discount_percentage',
+        'discount_amount',
     ];
 
     protected function casts(): array
@@ -36,10 +42,20 @@ class Hotel extends Model
         return [
             'amenities'     => 'array',
             'images'        => 'array',
+            'search_tags'   => 'array',
             'check_in_time' => 'datetime:H:i:s',
             'check_out_time'=> 'datetime:H:i:s',
             'approved_at'   => 'datetime',
+            'retail_price'  => 'decimal:2',
+            'contract_price'=> 'decimal:2',
+            'discount_percentage' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
         ];
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function owner(): BelongsTo

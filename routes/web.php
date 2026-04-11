@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Web\AdminAuthController;
 use App\Http\Controllers\Admin\Web\AdminDashboardController;
+use App\Http\Controllers\Admin\CompanyApprovalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,8 +15,16 @@ Route::post('admin/login', [AdminAuthController::class, 'login'])->name('admin.l
 Route::post('admin/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 // Admin panel (protected)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+
+    // Company Approvals
+    Route::get('companies/pending', [CompanyApprovalController::class, 'pending'])->name('companies.pending');
+    Route::get('companies/{id}', [CompanyApprovalController::class, 'show'])->name('companies.show');
+    Route::post('companies/{id}/approve', [CompanyApprovalController::class, 'approve'])->name('companies.approve');
+    Route::post('companies/{id}/reject', [CompanyApprovalController::class, 'reject'])->name('companies.reject');
+    Route::get('companies/{id}/documents', [CompanyApprovalController::class, 'documents'])->name('companies.documents');
+    Route::post('companies/documents/{docId}/verify', [CompanyApprovalController::class, 'verifyDocument'])->name('companies.documents.verify');
 
     // Hotels
     Route::get('/hotels', [AdminDashboardController::class, 'hotels'])->name('hotels.index');
@@ -39,3 +48,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Chats
     Route::get('/chats', [AdminDashboardController::class, 'chats'])->name('chats.index');
 });
+
+// Partner Panel
+require __DIR__ . '/partner.php';

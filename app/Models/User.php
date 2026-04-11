@@ -80,4 +80,46 @@ class User extends Authenticatable
     {
         return $this->hasMany(Hotel::class, 'approved_by');
     }
+
+    /**
+     * Companies this user owns (as the primary owner)
+     */
+    public function ownedCompanies()
+    {
+        return $this->hasMany(Company::class, 'owner_id');
+    }
+
+    /**
+     * Companies this user belongs to (as staff/admin)
+     */
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class, 'company_users')
+                    ->withPivot('role', 'status')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Check if user has an approved company with specific module
+     */
+    public function hasApprovedCompanyWithModule(string $moduleType): bool
+    {
+        return $this->companies()
+                    ->whereHas('modules', function ($query) use ($moduleType) {
+                        $query->where('module_type', $moduleType)
+                              ->where('status', 'approved');
+                    })
+                    ->where('status', 'approved')
+                    ->exists();
+    }
+
+    /**
+     * Get user's primary approved company (if any)
+     */
+    public function primaryCompany()
+    {
+        return $this->companies()
+                    ->where('status', 'approved')
+                    ->first();
+    }
 }
