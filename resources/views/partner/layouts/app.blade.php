@@ -48,7 +48,7 @@
                         Dashboard
                     </a>
                     
-                    @if(auth()->user()->companies()->where('status', 'approved')->exists())
+                    @if(auth()->user()->companies()->where('companies.status', 'approved')->exists())
                     <a href="{{ route('partner.company.show') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('partner.company.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                         <i class="fas fa-building mr-3 text-lg {{ request()->routeIs('partner.company.*') ? 'text-primary-600' : 'text-gray-400' }}"></i>
                         Company Profile
