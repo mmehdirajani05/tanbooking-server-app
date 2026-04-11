@@ -13,18 +13,27 @@ class CompanyApprovalController extends Controller
     public function __construct(private CompanyService $companyService) {}
 
     /**
+     * List all companies with optional status filter
+     */
+    public function index(Request $request)
+    {
+        $query = Company::with(['owner:id,name,email,phone', 'modules']);
+
+        if ($request->status && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $companies = $query->withCount('documents')->latest()->paginate(20);
+
+        return view('admin.companies.index', compact('companies'));
+    }
+
+    /**
      * List pending companies
      */
     public function pending()
     {
-        $companies = Company::where('status', 'pending')
-            ->with('owner:id,name,email,phone')
-            ->withCount('modules')
-            ->withCount('documents')
-            ->latest()
-            ->paginate(20);
-
-        return view('admin.companies.pending', compact('companies'));
+        return redirect()->route('admin.companies.index', ['status' => 'pending']);
     }
 
     /**

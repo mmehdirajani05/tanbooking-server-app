@@ -43,6 +43,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
 
     // Company Approvals
+    Route::get('companies', [CompanyApprovalController::class, 'index'])->name('companies.index');
     Route::get('companies/pending', [CompanyApprovalController::class, 'pending'])->name('companies.pending');
     Route::get('companies/{id}', [CompanyApprovalController::class, 'show'])->name('companies.show');
     Route::post('companies/{id}/approve', [CompanyApprovalController::class, 'approve'])->name('companies.approve');
